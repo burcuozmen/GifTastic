@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>GifTastic</title>
+</head>
+
+<body>
+
+        <div class="container">
+             
+            
+                <!-- Topics will get dumped here -->
+                <div id="buttons-view"></div>
+            
+                <form id="topic-form">
+                  <label for="topic-input">Add a Character</label>
+                  <input type="text" id="topic-input"><br>
+            
+                  <!-- Button triggers new topic to be added -->
+                  <input id="add-topic" type="submit" value="Submit">
+                </form>
+                <div id="gifs-appear-here"></div>
+    
+    
+      
+        
+        
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script type="text/javascript">
+
+  
+    
+    // Initial array of Topics
+    var topics = ["jonsnow", "cercei", "daenerys", "brienne-of-tarth", "arya-stark", "bran-stark" ,"tyrion-lannister"];
+    
+    // Function for displaying topic data
+    function renderButtons() {
+
+      // Deleting the Topic buttons prior to adding new Topic buttons
+      // (this is necessary otherwise we will have repeat buttons)
+       $("#buttons-view").empty();
+
+      // Looping through the array of Topics
+        for (var i = 0; i < topics.length; i++) {
+        
+           // Dynamicaly generating buttons for each topic in the array.
+          
+          var a = $("<button>");
+          // Adding a class
+          a.addClass("topic");
+          // Adding a data-attribute with a value of the topic at index i
+          a.attr("topic-name", topics[i]);
+          // Providing the button's text with a value of the topic at index i
+          a.text(topics[i]);
+          // Adding the button to the HTML
+          $("#buttons-view").append(a);
+        }
+
+    }
+
+       // This function handles events where one button is clicked
+       $("#add-topic").on("click", function(event) {
+        // event.preventDefault() prevents the form from trying to submit itself.
+        // We're using a form so that the user can hit enter instead of clicking the button if they want
+         event.preventDefault();
+
+        // This line will grab the text from the input box
+        var topic = $("#topic-input").val().trim();
+        // The topic from the textbox is then added to our array
+        topics.push(topic);
+
+        // calling renderButtons which handles the processing of our Topics array
+        renderButtons();
+      });
+
+      // Calling the renderButtons function at least once to display the initial list of Topics
+      renderButtons();
+
+     
+
+
+    
+
+       // Adding click event listen listener to all buttons
+       $("button").on("click", function() {
+      // Grabbing and storing the topic-name property value from the button
+       var topic = $(this).attr("topic-name");
+
+      // Constructing a queryURL using the topic name
+       var queryURL = "https://api.giphy.com/v1/gifs/search?q=" +
+        topic + "&api_key=6aTAUL6zBk9XehT7ngEGjFN7IqAOFeff&limit=10";
+
+     // Performing an AJAX request with the queryURL
+       $.ajax({
+        url: queryURL,
+        method: "GET"
+       })
+
+      // After data comes back from the request
+      .then(function(response) {
+          console.log(queryURL);
+
+          console.log(response);
+          // storing the data from the AJAX request in the results variable
+          var results = response.data ;
+
+          // Looping through each result item
+  
+          for (var i = 0; i < results.length; i++) {
+           
+            // Creating and storing a div tag
+            var topicDiv = $("<div>");
+
+            // Creating a paragraph tag with the result item's rating
+            p = $("<p>").text("Rating: " + results[i].rating);
+
+            // Creating and storing an image tag
+            var topicImage = $("<img>");
+           // Setting the src attribute of the image to a property pulled off the result item
+           topicImage.attr("src", results[i].images.fixed_height.url);
+
+           // Appending the paragraph and image tag to the topicDiv
+           topicDiv.append(p);
+           topicDiv.append(topicImage);
+
+          // Prependng the topicDiv to the HTML page in the "#gifs-appear-here" div
+          $("#gifs-appear-here").prepend(topicDiv);
+          }
+      });
+
+  });    
+
+        
+
+
+
+      
+
+
+  
+
+   
+  </script>
+
+</body>
+
+</html>
