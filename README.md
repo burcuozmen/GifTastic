@@ -26,4 +26,4 @@ GifTastic - A web based - Game of Thrones Themed Gif machine
  Bootstrap
  JavaScript
  jQuery - JavaScript Library
- giphy API- AJAX
+ Giphy API- AJAX
